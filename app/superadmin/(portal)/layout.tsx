@@ -30,6 +30,9 @@ export default async function SuperadminPortalLayout({ children }: { children: R
           </span>
         </div>
         <div className="flex flex-wrap items-center gap-1 sm:gap-3">
+          <Link href="/superadmin/ceo" className={buttonVariants({ variant: "ghost", size: "sm" })}>
+            CEO
+          </Link>
           <Link href="/superadmin/finance" className={buttonVariants({ variant: "ghost", size: "sm" })}>
             Keuangan
           </Link>
