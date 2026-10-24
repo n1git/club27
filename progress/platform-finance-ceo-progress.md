@@ -1,6 +1,6 @@
 # platform-finance-ceo
 
-Status: Phase 0 approved 2026-10-24 (all five decisions OK). Phases 1-4 built and checked locally; migrations 072 and 073 are NOT applied to hosted. The page and app code is held on a local branch until both are applied. Migration numbers moved to 072 (finance) and 073 (activity) because 071 is `profile_bio_badges`.
+Status: Phase 0 approved 2026-10-24 (all five decisions OK). All phases done. Migrations 072 and 073 applied to hosted 2026-10-25 (versions 20250101000072 and 20250101000073; finance MRR equals CEO MRR on hosted; client roles denied) and the code is pushed. Migration numbers moved to 072 (finance) and 073 (activity) because 071 is `profile_bio_badges`.
 
 ## Phases
 
