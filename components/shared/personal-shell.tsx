@@ -12,8 +12,13 @@ import { QuickAddProvider } from "@/components/personal/quick-add";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export async function PersonalShell({ user, children }: { user: { fullName: string; accountId: string }; children: React.ReactNode }) {
-  const [restriction, badges, clubTypes] = await Promise.all([socialRestriction(user.accountId), getSocialBadges(user.accountId), getReadyClubTypes()]);
-  const unread = restriction === null ? await getUnreadCounts() : null;
+  const [restriction, badges, clubTypes, counts] = await Promise.all([
+    socialRestriction(user.accountId),
+    getSocialBadges(user.accountId),
+    getReadyClubTypes(),
+    getUnreadCounts(),
+  ]);
+  const unread = restriction === null ? counts : null;
   const sports = clubTypes.map((t) => ({ code: t.code, label: t.name.replace(/^Klub\s+/, "") }));
   const allGroups: NavGroup[] = [
     {

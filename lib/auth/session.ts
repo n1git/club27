@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { cache } from "react";
 import { signSession, verifySession, type SessionClaims, type SessionContext } from "./jwt";
 import type { AppRole } from "./roles";
 
@@ -51,8 +52,8 @@ export async function getSessionToken(): Promise<string | null> {
   return cookieStore.get(COOKIE_NAME)?.value ?? null;
 }
 
-export async function getSession(): Promise<SessionClaims | null> {
+export const getSession = cache(async (): Promise<SessionClaims | null> => {
   const token = await getSessionToken();
   if (!token) return null;
   return verifySession(token);
-}
+});

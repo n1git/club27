@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { isMinor } from "@/lib/privacy";
 import type { ActionState } from "@/lib/actions/types";
@@ -16,14 +17,14 @@ export async function isMinorAccount(accountId: string): Promise<boolean> {
   return (members ?? []).some((m) => Boolean(m.date_of_birth) && isMinor(m.date_of_birth as string));
 }
 
-export async function socialRestriction(accountId: string): Promise<SocialRestriction> {
+export const socialRestriction = cache(async (accountId: string): Promise<SocialRestriction> => {
   const [{ data }, minor] = await Promise.all([
     createAdminSupabaseClient().from("accounts").select("social_banned_at").eq("id", accountId).maybeSingle(),
     isMinorAccount(accountId),
   ]);
   if (data?.social_banned_at) return "banned";
   return minor ? "minor" : null;
-}
+});
 
 export async function isSocialBanned(accountId: string): Promise<boolean> {
   return (await socialRestriction(accountId)) !== null;

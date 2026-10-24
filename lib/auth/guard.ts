@@ -41,7 +41,7 @@ function accountRevoked(account: AccountRow | null, session: SessionClaims): Ses
   return null;
 }
 
-export async function checkSession(session: SessionClaims): Promise<SessionCheck> {
+export const checkSession = cache(async (session: SessionClaims): Promise<SessionCheck> => {
   const admin = createAdminSupabaseClient();
   if (!session.account_id || !session.ctx) return { ok: false, reason: "revoked" };
 
@@ -126,7 +126,7 @@ export async function checkSession(session: SessionClaims): Promise<SessionCheck
       isMember: profile.role === "member",
     },
   };
-}
+});
 
 export function sessionEndedPath(reason: SessionEndReason) {
   return `/api/auth/session-ended?reason=${reason}`;
