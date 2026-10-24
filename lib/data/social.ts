@@ -1,4 +1,5 @@
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { signPaths, signPhotos, type PostPhoto } from "@/lib/media/post-media";
 
 export interface Person {
@@ -181,7 +182,17 @@ export interface ProfileTile {
   photoCount: number;
 }
 
+export interface ProfileBadge {
+  id: string;
+  code: string;
+  name: string;
+  description: string;
+  earnedOn: string;
+}
+
 export interface ProfileSocial {
+  bio: string | null;
+  badges: ProfileBadge[];
   person: Person | null;
   posts: number;
   friends: number;
@@ -192,12 +203,14 @@ const TILE_LIMIT = 60;
 
 export async function getProfileSocial(username: string): Promise<ProfileSocial> {
   const supabase = await createServerSupabaseClient();
-  const [{ data: counts }, { data: person }] = await Promise.all([
+  const [{ data: counts }, { data: extras }, { data: person }] = await Promise.all([
     supabase.rpc("profile_counts", { p_username: username }),
+    supabase.rpc("profile_extras", { p_username: username }),
     supabase.from("social_people").select("id").eq("username", username).maybeSingle(),
   ]);
   const count = ((counts ?? []) as { posts: number; friends: number }[])[0];
-  if (!person || !count) return { person: null, posts: 0, friends: 0, tiles: [] };
+  const extra = ((extras ?? []) as { bio: string | null; badges: { id: string; code: string; name: string; description: string; earned_on: string }[] }[])[0];
+  if (!person || !count) return { bio: null, badges: [], person: null, posts: 0, friends: 0, tiles: [] };
   const [people, { data: rows }] = await Promise.all([
     peopleMap([person.id as string]),
     supabase
@@ -215,6 +228,8 @@ export async function getProfileSocial(username: string): Promise<ProfileSocial>
   const photoCount = new Map<string, number>();
   for (const m of media ?? []) photoCount.set(m.post_id as string, (photoCount.get(m.post_id as string) ?? 0) + 1);
   return {
+    bio: extra?.bio ?? null,
+    badges: (extra?.badges ?? []).map((b) => ({ id: b.id, code: b.code, name: b.name, description: b.description, earnedOn: b.earned_on })),
     person: people.get(person.id as string) ?? null,
     posts: count.posts,
     friends: count.friends,
@@ -228,5 +243,29 @@ export async function getProfileSocial(username: string): Promise<ProfileSocial>
       photoUrl: first.get(p.id as string) ?? null,
       photoCount: photoCount.get(p.id as string) ?? 0,
     })),
+  };
+}
+
+export interface SocialProfileSettings {
+  bio: string;
+  featured: string[];
+  earned: { id: string; name: string; description: string }[];
+}
+
+export async function getSocialProfileSettings(accountId: string): Promise<SocialProfileSettings> {
+  const supabase = await createServerSupabaseClient();
+  const [account, earned] = await Promise.all([
+    createAdminSupabaseClient().from("accounts").select("bio, featured_badges").eq("id", accountId).maybeSingle(),
+    supabase.from("achievements").select("id, achievement_types(name, description)").order("earned_on", { ascending: false }).limit(100),
+  ]);
+  const list = (earned.data ?? []).flatMap((a) => {
+    const type = (Array.isArray(a.achievement_types) ? a.achievement_types[0] : a.achievement_types) as { name: string; description: string } | null | undefined;
+    return type ? [{ id: a.id as string, name: type.name, description: type.description }] : [];
+  });
+  const ids = new Set(list.map((b) => b.id));
+  return {
+    bio: (account.data?.bio as string | null) ?? "",
+    featured: ((account.data?.featured_badges as string[] | null) ?? []).filter((id) => ids.has(id)),
+    earned: list,
   };
 }

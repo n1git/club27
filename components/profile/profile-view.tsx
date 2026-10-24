@@ -7,7 +7,8 @@ import { formatJakartaDate } from "@/lib/format";
 import { formatRupiah, PERIOD_LABEL } from "@/lib/pricing";
 import type { BillingPeriod } from "@/lib/pricing";
 import type { OrganizationSection, ProfileData } from "@/lib/data/profile";
-import type { ProfileSocial } from "@/lib/data/social";
+import type { ProfileSocial, SocialProfileSettings } from "@/lib/data/social";
+import { SocialProfileForm } from "./social-profile-form";
 import { PostGrid } from "@/components/social/post-grid";
 import { ProfileHeader } from "@/components/social/profile-header";
 import { buttonVariants } from "@/components/ui/button";
@@ -51,10 +52,12 @@ export function ProfileView({
   data,
   avatar,
   view = "all",
+  socialSettings,
 }: {
   data: ProfileData;
   avatar?: { url: string | null; social?: ProfileSocial; sportLabels?: Record<string, string> } | null;
   view?: "all" | "social" | "account";
+  socialSettings?: SocialProfileSettings | null;
 }) {
   const { account } = data;
   if (view === "social" && avatar?.social) {
@@ -65,6 +68,8 @@ export function ProfileView({
           username={account.username}
           avatarUrl={avatar.url}
           counts={{ posts: avatar.social.posts, friends: avatar.social.friends }}
+          bio={avatar.social.bio}
+          badges={avatar.social.badges}
         >
           <Link href="/settings/account" className={buttonVariants({ variant: "outline", size: "sm" })}>
             Ubah foto dan data akun
@@ -97,6 +102,17 @@ export function ProfileView({
             </CardHeader>
             <CardContent>
               <AvatarEditor name={account.fullName} url={avatar.url} />
+            </CardContent>
+          </Card>
+        ) : null}
+        {socialSettings ? (
+          <Card>
+            <CardHeader>
+              <CardTitle>Profil sosial</CardTitle>
+              <CardDescription>Bio dan lencana yang tampil di profil Anda, terlihat oleh teman.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <SocialProfileForm settings={socialSettings} />
             </CardContent>
           </Card>
         ) : null}

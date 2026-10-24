@@ -56,7 +56,7 @@ export async function buildAccountExport(accountId: string): Promise<{ filename:
   const supabase = createAdminSupabaseClient();
   const { data: account } = await supabase
     .from("accounts")
-    .select("id, email, username, full_name, phone, address, avatar_path, created_at, last_login_at")
+    .select("id, email, username, full_name, phone, address, bio, avatar_path, created_at, last_login_at")
     .eq("id", accountId)
     .maybeSingle();
   if (!account) throw new Error("account not found");

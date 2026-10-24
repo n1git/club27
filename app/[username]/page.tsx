@@ -82,6 +82,8 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
           username={profile.username}
           avatarUrl={social?.person?.avatarUrl ?? null}
           counts={social && social.person ? { posts: social.posts, friends: social.friends } : null}
+          bio={social?.bio}
+          badges={social?.badges}
         >
           {profile.relation === "none" ? (
             <ActionForm action={sendFriendRequest} className="flex">
