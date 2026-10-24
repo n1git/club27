@@ -50,10 +50,22 @@ Dinilai: 2026-10-20, versi persetujuan `2026-10-20` (`lib/consent.ts`). Tinjau u
 | Pesan langsung (`dm_threads`, `dm_messages`, foto di bucket privat) | percakapan 1 lawan 1 antar teman | hanya dua peserta (RLS); kirim hanya lewat `send_message` yang memeriksa pertemanan, blokir, dan pembatasan akun | 365 hari, lalu dihapus cron; hapus akun menghapus semua pesan dan file percakapannya | pesan bisa ditarik (isi dan foto dihapus); percakapan menjadi baca-saja saat pertemanan berakhir atau ada blokir; pesan bisa dilaporkan; batas 1.000 pesan per hari |
 | Sisa risiko | isi pesan tidak dienkripsi ujung ke ujung dan dapat dibaca superadmin lewat laporan; pesan yang sudah dibaca penerima tetap bisa disalin atau ditangkap layar; cadangan penyedia menyimpan salinan sampai masa retensi cadangan berakhir | | | |
 
+## 5. Log hari aktif
+
+| Aspek | Isi |
+|---|---|
+| Data | `account_activity_days` (akun dan tanggal WIB); tanpa IP, perangkat, halaman, atau jam |
+| Tujuan | statistik pemakaian layanan (WAU, MAU) dan keamanan layanan |
+| Dasar | kepentingan sah; bukan persetujuan |
+| Akses | hanya service role; dibaca hanya oleh fungsi agregat superadmin (`ceo_snapshot`, `ceo_weekly_trend`) dan tidak pernah ditampilkan per akun; klien tidak punya akses baca maupun tulis |
+| Risiko | pola pemakaian per orang bisa disimpulkan bila data per akun dibuka; data disimpan lebih lama dari perlu |
+| Pengendalian | satu baris per akun per hari (`record_activity_day`, `on conflict do nothing`, cache singkat di server); dihapus otomatis setelah 13 bulan (`purge_activity_days`, cron harian); hapus akun menghapus barisnya (`on delete cascade`); ikut ekspor akun (`hari_aktif.csv`); disebut di `/privacy` dan rincian persetujuan |
+| Sisa risiko | superadmin dengan akses basis data dapat membaca baris per akun; cadangan penyedia menyimpan salinan sampai masa retensi cadangan berakhir |
+
 ## Penyedia dan transfer ke luar negeri
 
 Supabase (Jepang), Vercel (Amerika Serikat), Resend (Amerika Serikat), Cloudflare Turnstile (Amerika Serikat), Midtrans (Indonesia). Daftar yang ditampilkan ke pengguna ada di `lib/consent.ts`. Penyedia baru wajib ditambahkan di sana dan menaikkan `CONSENT_VERSION`.
 
 ## Masa simpan
 
-`audit_log` 5 tahun; akun pribadi tanpa login 3 tahun; data klub dapat dibaca satu tahun setelah langganan berakhir. `retention_candidates()` hanya mendaftar kandidat; penghapusan dilakukan manual setelah ditinjau.
+`audit_log` 5 tahun; akun pribadi tanpa login 3 tahun; `account_activity_days` 13 bulan (dihapus otomatis oleh cron harian); data klub dapat dibaca satu tahun setelah langganan berakhir. `retention_candidates()` hanya mendaftar kandidat; penghapusan dilakukan manual setelah ditinjau.

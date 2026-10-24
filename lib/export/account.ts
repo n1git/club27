@@ -96,6 +96,7 @@ export async function buildAccountExport(accountId: string): Promise<{ filename:
   add("cerita_dilihat", await fetchAll("story_views", "story_id, viewed_at", "viewer_id", accountId, "viewed_at"));
   add("notifikasi", flat(await fetchAll("notifications", "type, read_at, created_at, other:accounts!notifications_actor_id_fkey(username)", "recipient_id", accountId), "other", "username", "username_lain"));
   add("pesan", await messageRows(accountId));
+  add("hari_aktif", await fetchAll("account_activity_days", "day", "account_id", accountId, "day"));
   add("laporan_dikirim", await fetchAll("reports", "id, target_type, target_id, reason, created_at", "reporter_id", accountId));
   const { data: consents } = await supabase.from("consents").select("kind, version, accepted_at, revoked_at").eq("subject_type", "account").eq("subject_id", accountId);
   add("persetujuan", (consents ?? []) as Row[]);

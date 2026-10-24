@@ -6,6 +6,7 @@ import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { cache } from "react";
 import { roleHome, type AppRole } from "./roles";
 import { adminPathAllowed, hasAny, staffHome, type PermissionCode, type PermissionSet } from "./permissions";
+import { noteActivity } from "./activity";
 import { BILLING_OPEN_PATHS, billingPhase, isLockedPhase, isReadOnlyPhase, type BillingState } from "@/lib/billing/access";
 
 export class UnauthorizedError extends Error {}
@@ -41,7 +42,7 @@ function accountRevoked(account: AccountRow | null, session: SessionClaims): Ses
   return null;
 }
 
-export const checkSession = cache(async (session: SessionClaims): Promise<SessionCheck> => {
+const checkSessionUncached = async (session: SessionClaims): Promise<SessionCheck> => {
   const admin = createAdminSupabaseClient();
   if (!session.account_id || !session.ctx) return { ok: false, reason: "revoked" };
 
@@ -126,6 +127,12 @@ export const checkSession = cache(async (session: SessionClaims): Promise<Sessio
       isMember: profile.role === "member",
     },
   };
+};
+
+export const checkSession = cache(async (session: SessionClaims): Promise<SessionCheck> => {
+  const result = await checkSessionUncached(session);
+  if (result.ok && session.account_id) noteActivity(session.account_id);
+  return result;
 });
 
 export function sessionEndedPath(reason: SessionEndReason) {

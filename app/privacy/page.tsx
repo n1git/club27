@@ -50,6 +50,7 @@ export default function PrivacyPage() {
           peringkat, dan dapat dihapus kapan saja. Rincian persetujuan Anda dapat dilihat di Pengaturan akun.
         </li>
         <li>Catatan persetujuan dan riwayat tindakan penting di aplikasi.</li>
+        <li>Tanggal hari Anda memakai aplikasi.</li>
       </ul>
       <p>Data kartu atau rekening pembayaran diproses langsung oleh penyedia pembayaran dan tidak kami simpan.</p>
 
@@ -59,6 +60,7 @@ export default function PrivacyPage() {
         <li>Membantu klub mengelola anggota, kegiatan, dan keuangannya.</li>
         <li>Menampilkan peringkat, kudos, dan kabar latihan kepada teman, sesama anggota grup, atau klub sesuai pengaturan Anda.</li>
         <li>Menjaga keamanan akun dan mencegah penyalahgunaan.</li>
+        <li>Menyusun statistik pemakaian layanan.</li>
         <li>Memenuhi kewajiban hukum, termasuk pencatatan keuangan.</li>
       </ul>
       <p>Kami tidak menjual data pribadi dan tidak memakainya untuk iklan.</p>

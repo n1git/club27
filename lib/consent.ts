@@ -1,4 +1,4 @@
-export const CONSENT_VERSION = "2026-10-20";
+export const CONSENT_VERSION = "2026-10-25";
 
 export const CONSENT_LABEL = "Saya berusia 18 tahun ke atas dan menyetujui Syarat & Ketentuan dan Kebijakan Privasi";
 
@@ -28,7 +28,7 @@ export const CONSENT_ITEMS: ConsentItem[] = [
   },
   {
     title: "Masa simpan",
-    body: "Data akun dan klub disimpan selama akun atau langganan berjalan. Setelah langganan berakhir, data klub hanya dapat dibaca selama satu tahun. Log audit disimpan 5 tahun. Akun pribadi yang tidak login selama 3 tahun dapat dihapus. Catatan keuangan dapat disimpan lebih lama bila diwajibkan peraturan.",
+    body: "Data akun dan klub disimpan selama akun atau langganan berjalan. Setelah langganan berakhir, data klub hanya dapat dibaca selama satu tahun. Log audit disimpan 5 tahun. Akun pribadi yang tidak login selama 3 tahun dapat dihapus. Catatan hari aktif (hanya tanggal, untuk statistik pemakaian) disimpan 13 bulan. Catatan keuangan dapat disimpan lebih lama bila diwajibkan peraturan.",
   },
   {
     title: "Bukti persetujuan",

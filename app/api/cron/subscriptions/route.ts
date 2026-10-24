@@ -35,8 +35,9 @@ export async function GET(request: Request) {
   const supabase = createAdminSupabaseClient();
   const { data: expired, error } = await supabase.rpc("expire_subscriptions");
   if (error) return NextResponse.json({ error: "expire failed" }, { status: 500 });
+  const { data: activityPurged } = await supabase.rpc("purge_activity_days");
 
-  if (!isEmailConfigured()) return NextResponse.json({ expired, reminders: 0 });
+  if (!isEmailConfigured()) return NextResponse.json({ expired, reminders: 0, activityPurged });
 
   const today = getJakartaDateString();
   let reminders = 0;
@@ -64,5 +65,5 @@ export async function GET(request: Request) {
     }
   }
 
-  return NextResponse.json({ expired, reminders });
+  return NextResponse.json({ expired, reminders, activityPurged });
 }
