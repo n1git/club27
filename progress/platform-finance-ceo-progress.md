@@ -1,14 +1,16 @@
 # platform-finance-ceo
 
-Status: Phase 0 approved 2026-10-24 (all five decisions OK). Phase 1 done locally; migration 072 is NOT applied to hosted. Migration numbers moved to 072 (finance) and 073 (activity) because 071 is `profile_bio_badges`.
+Status: Phase 0 approved 2026-10-24 (all five decisions OK). Phases 1-4 built and checked locally; migrations 072 and 073 are NOT applied to hosted. The page and app code is held on a local branch until both are applied. Migration numbers moved to 072 (finance) and 073 (activity) because 071 is `profile_bio_badges`.
 
 ## Phases
 
 - [x] Phase 0: plan, metric definitions, worked examples, mocks (this file, `platform-finance-ceo/`). Owner OK 2026-10-24.
 - [x] Phase 1: migration `20250101000072_platform_finance.sql` and `supabase/tests/finance_phase10.sql` (every number in the worked example, mid-month start, partial and full refund, RF001/RF002, gateway fee actual vs estimate, UMKM tax, P&L, client access denied). All 19 suites pass on a fresh database. Hosted dry run (begin/rollback) of the table and column changes passed; the functions were only run locally because a 20 KB payload through the Supabase MCP tends to hang. Not applied.
-- [ ] Phase 2 (code held until 072 is applied): `/superadmin/finance`, expenses, gateway rates, refunds, CSV, replace the revenue card on `/superadmin`.
-- [ ] Phase 3: migration `20250101000073_activity_ceo.sql` and tests; activity log writer, cron step, account export, DPIA, `lib/consent.ts`, `/privacy`.
-- [ ] Phase 4: `/superadmin/ceo` and the top bar link.
+- [x] Phase 2 (code held until 072 is applied): `/superadmin/finance`, expenses, gateway rates, refunds, CSV, replace the revenue card on `/superadmin`.
+- [x] Phase 3: migration `20250101000073_activity_ceo.sql` and `supabase/tests/activity_phase11.sql` (one row for three logins, 13-month purge, cascade on account delete, CEO MRR equals finance MRR, no email in the top list, clients denied); activity log writer, cron step, account export, DPIA, `lib/consent.ts`, `/privacy`.
+- [x] Phase 4: `/superadmin/ceo` and the top bar link.
+
+Checked locally (Next + PostgREST, superadmin login with TOTP): finance page, expenses, fee rates, gateway fee actual, partial refund, copy expenses (second copy refused), CSV zip equals the screen (net and cash), audit rows for each write; CEO page week and month, chart renders, CEO MRR equals finance MRR; both pages 390 px wide on mobile; warm loads 0.5-0.9 s in dev mode. All 20 SQL suites pass. Hosted dry runs of the table, column and index changes passed. MRR uses the monthly rate per contract month (`billing_span_months`) so a mid-month monthly subscription shows Rp150.000, while recognized revenue still follows calendar-month coverage.
 
 ## Definitions
 

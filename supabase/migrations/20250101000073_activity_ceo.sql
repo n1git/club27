@@ -95,7 +95,8 @@ begin
     then platform_metrics(v_prev_start)
     else jsonb_build_object(
       'mrr', coalesce((select sum(mrr) from platform_org_mrr(least(v_start, v_today) - 1, false)), 0),
-      'paying_orgs', (select count(*) from platform_org_mrr(least(v_start, v_today) - 1, false) where mrr > 0)
+      'paying_orgs', (select count(*) from platform_org_mrr(least(v_start, v_today) - 1, false) where mrr > 0),
+      'paid_seats', (select coalesce(sum(os.seats), 0) from platform_org_mrr(least(v_start, v_today) - 1, false) m join organization_subscriptions os on os.organization_id = m.organization_id where m.mrr > 0)
     )
   end;
   select min(day) into v_first_day from account_activity_days;
