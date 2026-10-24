@@ -1,13 +1,13 @@
 # platform-finance-ceo
 
-Status: Phase 0 (plan and mocks) done. Waiting for the owner's OK. Nothing built yet.
+Status: Phase 0 approved 2026-10-24 (all five decisions OK). Phase 1 done locally; migration 072 is NOT applied to hosted. Migration numbers moved to 072 (finance) and 073 (activity) because 071 is `profile_bio_badges`.
 
 ## Phases
 
-- [x] Phase 0: plan, metric definitions, worked examples, mocks (this file, `platform-finance-ceo/`). Wait for OK.
-- [ ] Phase 1: migration `20250101000071_platform_finance.sql` and tests.
-- [ ] Phase 2: `/superadmin/finance`, expenses, gateway rates, refunds, CSV, replace the revenue card on `/superadmin`.
-- [ ] Phase 3: migration `20250101000072_activity_ceo.sql` and tests; activity log writer, cron step, account export, DPIA, `lib/consent.ts`, `/privacy`.
+- [x] Phase 0: plan, metric definitions, worked examples, mocks (this file, `platform-finance-ceo/`). Owner OK 2026-10-24.
+- [x] Phase 1: migration `20250101000072_platform_finance.sql` and `supabase/tests/finance_phase10.sql` (every number in the worked example, mid-month start, partial and full refund, RF001/RF002, gateway fee actual vs estimate, UMKM tax, P&L, client access denied). All 19 suites pass on a fresh database. Hosted dry run (begin/rollback) of the table and column changes passed; the functions were only run locally because a 20 KB payload through the Supabase MCP tends to hang. Not applied.
+- [ ] Phase 2 (code held until 072 is applied): `/superadmin/finance`, expenses, gateway rates, refunds, CSV, replace the revenue card on `/superadmin`.
+- [ ] Phase 3: migration `20250101000073_activity_ceo.sql` and tests; activity log writer, cron step, account export, DPIA, `lib/consent.ts`, `/privacy`.
 - [ ] Phase 4: `/superadmin/ceo` and the top bar link.
 
 ## Definitions
