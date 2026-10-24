@@ -57,12 +57,53 @@ export function WorkoutsSkeleton() {
 
 export function FriendsSkeleton() {
   return (
-    <SkelStack title>
-      <div className="grid items-start gap-4 lg:grid-cols-2">
-        <SkelCard lines={2} />
-        <SkelCard lines={1} />
-        <SkelCard lines={3} />
-        <SkelCard lines={1} />
+    <SkelStack>
+      <div className="hidden sm:block">
+        <SkelHeader />
+      </div>
+      <div className="flex items-center justify-between gap-3 sm:hidden">
+        <div className="flex items-center gap-3">
+          <LoadingMark />
+          <div className="flex flex-col gap-2">
+            <Skeleton className="h-5 w-20" />
+            <Skeleton className="h-3 w-40" />
+          </div>
+        </div>
+        <Skeleton className="h-8 w-28 rounded-md" />
+      </div>
+      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
+        <div className="flex min-w-0 flex-col gap-3 lg:col-start-1 lg:row-start-1">
+          <Skeleton className="h-4 w-20" />
+          <Skeleton className="h-11 w-full rounded-xl" />
+          <div className="flex flex-col divide-y divide-border rounded-2xl border border-border bg-card">
+            {Array.from({ length: 5 }, (_, i) => (
+              <div key={i} className="flex items-center gap-3 py-2 pl-4 pr-2">
+                <Skeleton className="size-12 shrink-0 rounded-full" />
+                <div className="flex min-w-0 flex-1 flex-col gap-2">
+                  <Skeleton className="h-3.5 w-1/3" />
+                  <Skeleton className="h-3 w-1/4" />
+                </div>
+                <Skeleton className="size-11 shrink-0 rounded-full" />
+                <Skeleton className="size-11 shrink-0 rounded-full" />
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="hidden flex-col gap-2 lg:col-start-2 lg:row-start-1 lg:flex">
+          <Skeleton className="h-4 w-36" />
+          <div className="flex flex-col divide-y divide-border rounded-2xl border border-border bg-card">
+            {Array.from({ length: 2 }, (_, i) => (
+              <div key={i} className="flex items-center gap-3 px-4 py-3">
+                <Skeleton className="size-12 shrink-0 rounded-full" />
+                <div className="flex min-w-0 flex-1 flex-col gap-2">
+                  <Skeleton className="h-3.5 w-2/3" />
+                  <Skeleton className="h-3 w-1/2" />
+                </div>
+                <Skeleton className="h-8 w-16 rounded-md" />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </SkelStack>
   );
