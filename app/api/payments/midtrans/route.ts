@@ -33,6 +33,7 @@ export async function POST(request: Request) {
     }
     const method = paymentMethodLabel(status);
     if (method) await supabase.from("subscription_renewals").update({ payment_method: method }).eq("id", renewal.id).is("payment_method", null);
+    if (status.payment_type) await supabase.from("subscription_renewals").update({ payment_type: status.payment_type }).eq("id", renewal.id).is("payment_type", null);
     if (renewal.status !== "paid") await logAudit({
       action: "subscription.renewal_confirm",
       targetType: "renewal",
@@ -43,11 +44,21 @@ export async function POST(request: Request) {
       actorLabel: "midtrans",
     });
   } else if (CLOSED.has(status.transaction_status) && renewal.status === "pending") {
-    await supabase
+    const { data: cleared } = await supabase
       .from("subscription_renewals")
       .update({ payment_order_id: null, payment_url: null })
       .eq("id", renewal.id)
-      .eq("payment_order_id", status.order_id);
+      .eq("payment_order_id", status.order_id)
+      .select("id");
+    if (cleared?.length) await logAudit({
+      action: "subscription.payment_failed",
+      targetType: "renewal",
+      targetId: renewal.id,
+      organizationId: renewal.organization_id,
+      details: { provider: "midtrans", status: status.transaction_status },
+      actorRole: "system",
+      actorLabel: "midtrans",
+    });
   }
 
   return NextResponse.json({ ok: true });

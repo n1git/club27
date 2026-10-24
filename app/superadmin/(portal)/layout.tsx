@@ -18,7 +18,7 @@ export default async function SuperadminPortalLayout({ children }: { children: R
 
   return (
     <div className="flex min-h-screen w-full flex-col">
-      <header className="flex items-center justify-between border-b border-border bg-card px-4 py-2 sm:px-6">
+      <header className="flex flex-wrap items-center justify-between gap-2 border-b border-border bg-card px-4 py-2 sm:px-6">
         <div className="flex items-center gap-2">
           <span className="sm:hidden"><BrandIcon /></span>
           <span className="hidden sm:block">
@@ -29,7 +29,10 @@ export default async function SuperadminPortalLayout({ children }: { children: R
             Superadmin
           </span>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-1 sm:gap-3">
+          <Link href="/superadmin/finance" className={buttonVariants({ variant: "ghost", size: "sm" })}>
+            Keuangan
+          </Link>
           <Link href="/superadmin/reports" className={buttonVariants({ variant: "ghost", size: "sm" })}>
             Laporan
           </Link>

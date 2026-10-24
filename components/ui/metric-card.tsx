@@ -22,6 +22,7 @@ export function MetricCard({
   delta,
   deltaLabel,
   spark,
+  hint,
   className,
 }: {
   title: string;
@@ -29,6 +30,7 @@ export function MetricCard({
   delta?: number;
   deltaLabel?: string;
   spark?: number[];
+  hint?: React.ReactNode;
   className?: string;
 }) {
   const up = (delta ?? 0) >= 0;
@@ -49,6 +51,7 @@ export function MetricCard({
               {deltaLabel ? <span className="text-muted-foreground">{deltaLabel}</span> : null}
             </p>
           ) : null}
+          {hint ? <p className="mt-1 text-xs text-muted-foreground">{hint}</p> : null}
         </div>
         {spark ? <Sparkline values={spark} className={delta === undefined ? "text-accent-foreground" : up ? "text-success" : "text-destructive"} /> : null}
       </CardContent>

@@ -75,7 +75,6 @@ export default async function SuperadminDashboardPage() {
   const planNames = new Map(plans.map((plan) => [plan.code as string, plan.name]));
   const isTrialExpired = (r: UsageRow) => r.status === "trial" && !!r.trial_ends_at && r.trial_ends_at < today;
   const isOverdue = (r: UsageRow) => r.status === "active" && !!r.current_period_end && r.current_period_end < today;
-  const monthlyRevenue = rows.filter((r) => r.status === "active").reduce((sum, r) => sum + Number(r.per_month ?? 0), 0);
 
   return (
     <div className="flex flex-col gap-6">
@@ -86,10 +85,9 @@ export default async function SuperadminDashboardPage() {
         <MetricCard title="Menunggu aktivasi" value={String(rows.filter((r) => r.status === "pending").length)} />
         <MetricCard title="Trial berjalan" value={String(rows.filter((r) => r.status === "trial" && !isTrialExpired(r)).length)} />
         <MetricCard title="Berakhir" value={String(rows.filter((r) => r.status === "expired" || isTrialExpired(r)).length)} />
-        <MetricCard
-          title={`Pendapatan bulanan (${rows.filter((r) => r.status === "active").length} aktif)`}
-          value={formatRupiah(monthlyRevenue)}
-        />
+        <Link href="/superadmin/finance" className="block rounded-[var(--radius-frame)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+          <MetricCard title={`Keuangan (${rows.filter((r) => r.status === "active").length} aktif)`} value="Buka" hint="MRR, pendapatan, biaya, laba rugi" className="h-full" />
+        </Link>
       </div>
 
       <section className="flex flex-col gap-3">
