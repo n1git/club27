@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
+import { useTheme } from "next-themes";
 
 const Toaster = dynamic(() => import("sonner").then((m) => m.Toaster), { ssr: false });
 
@@ -11,6 +12,7 @@ const WAKE_EVENTS = ["pointerdown", "keydown", "touchstart"] as const;
 
 export function LazyToaster() {
   const pathname = usePathname();
+  const { resolvedTheme } = useTheme();
   const [armed, setArmed] = useState(false);
   const hidden = NO_TOAST_PATHS.has(pathname);
 
@@ -32,5 +34,5 @@ export function LazyToaster() {
   }, [hidden, armed]);
 
   if (hidden || !armed) return null;
-  return <Toaster richColors position="top-center" />;
+  return <Toaster richColors position="top-center" theme={resolvedTheme === "dark" ? "dark" : "light"} />;
 }

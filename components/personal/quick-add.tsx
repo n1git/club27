@@ -3,6 +3,7 @@
 import { createContext, useCallback, useContext, useMemo, useState, type Dispatch, type FormEvent, type SetStateAction } from "react";
 import dynamic from "next/dynamic";
 import { usePathname, useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
 import { Plus } from "lucide-react";
 import { toast } from "sonner";
 import { sendFriendRequest, createPost } from "@/lib/actions/social";
@@ -72,6 +73,7 @@ export function QuickAddProvider({
 }) {
   const router = useRouter();
   const pathname = usePathname();
+  const { resolvedTheme } = useTheme();
   const [mode, setMode] = useState<QuickMode | null>(null);
   const [pending, setPending] = useState<ByKind<boolean>>({ post: false, friend: false, workout: false, story: false });
   const [formKeys, setFormKeys] = useState<ByKind<number>>({ post: 0, friend: 0, workout: 0, story: 0 });
@@ -110,7 +112,7 @@ export function QuickAddProvider({
   return (
     <QuickAddContext value={value}>
       {children}
-      {pathname === "/" ? <HomeToaster richColors position="top-center" /> : null}
+      {pathname === "/" ? <HomeToaster richColors position="top-center" theme={resolvedTheme === "dark" ? "dark" : "light"} /> : null}
     </QuickAddContext>
   );
 }
