@@ -7,8 +7,8 @@ import { getChallengeProgress, getMyChallengeState, listVisibleChallenges } from
 import { getJakartaDateString } from "@/lib/format";
 import { ChallengeCard } from "@/components/challenges/challenge-card";
 import { ChallengeForm } from "@/components/challenges/challenge-form";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PageHeader } from "@/components/ui/page-header";
+import { EmptyPanel, PageTop, Section } from "@/components/personal/page-top";
+import { FormSheet } from "@/components/ui/form-sheet";
 
 export const unstable_dynamicStaleTime = 0;
 
@@ -24,10 +24,15 @@ export default async function ChallengesPage() {
   const past = challenges.map((c, i) => ({ c, p: progress[i] })).filter(({ c }) => c.endsOn < today);
 
   return (
-    <div className="flex flex-col gap-8">
-      <PageHeader title="Tantangan" subtitle="Tantangan dari grup dan klub Anda. Ikut sukarela, progres dihitung dari catatan latihan." />
-      <section className="flex flex-col gap-3">
-        <h2 className="text-sm font-semibold text-muted-foreground">Berjalan</h2>
+    <div className="flex max-w-3xl flex-col gap-6">
+      <PageTop title="Tantangan" subtitle="Tantangan dari grup dan klub Anda. Ikut sukarela, progres dihitung dari catatan latihan." mobileSubtitle="Progres dihitung dari catatan latihan.">
+        {state.ownedGroups.length ? (
+          <FormSheet label="Buat tantangan" title="Buat tantangan grup" size="sm">
+            <ChallengeForm action={createGroupChallenge} groups={state.ownedGroups} sports={sports} today={today} />
+          </FormSheet>
+        ) : null}
+      </PageTop>
+      <Section title="Berjalan" count={active.length}>
         {active.length ? (
           <ul className="grid gap-3 md:grid-cols-2">
             {active.map(({ c, p }) => (
@@ -35,30 +40,19 @@ export default async function ChallengesPage() {
             ))}
           </ul>
         ) : (
-          <p className="text-sm text-muted-foreground">Belum ada tantangan berjalan di grup atau klub Anda.</p>
+          <EmptyPanel>
+            <p>Belum ada tantangan berjalan di grup atau klub Anda.{state.ownedGroups.length ? "" : " Pemilik grup bisa membuat tantangan untuk anggotanya."}</p>
+          </EmptyPanel>
         )}
-      </section>
-      {state.ownedGroups.length ? (
-        <Card>
-          <CardHeader>
-            <CardTitle>Buat tantangan grup</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ChallengeForm action={createGroupChallenge} groups={state.ownedGroups} sports={sports} today={today} />
-          </CardContent>
-        </Card>
-      ) : (
-        <p className="text-sm text-muted-foreground">Pemilik grup bisa membuat tantangan untuk anggotanya.</p>
-      )}
+      </Section>
       {past.length ? (
-        <section className="flex flex-col gap-3">
-          <h2 className="text-sm font-semibold text-muted-foreground">Sudah selesai</h2>
+        <Section title="Sudah selesai" count={past.length}>
           <ul className="grid gap-3 md:grid-cols-2">
             {past.map(({ c, p }) => (
               <ChallengeCard key={c.id} challenge={c} progress={p} joined={state.joined.has(c.id)} today={today} sportLabel={c.sport ? labels.get(c.sport) : undefined} href={`/c/${c.id}`} />
             ))}
           </ul>
-        </section>
+        </Section>
       ) : null}
     </div>
   );

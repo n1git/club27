@@ -7,6 +7,7 @@ import { getSocialBadges } from "@/lib/data/social";
 import { getUnreadCounts } from "@/lib/data/notifications";
 import { TopBarActions } from "@/components/personal/top-bar-actions";
 import { getReadyClubTypes } from "@/lib/club-type";
+import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { getJakartaDateString } from "@/lib/format";
 import { QuickAddProvider } from "@/components/personal/quick-add";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -19,6 +20,7 @@ export async function PersonalShell({ user, children }: { user: { fullName: stri
     getUnreadCounts(),
   ]);
   const unread = restriction === null ? counts : null;
+  const { data: account } = await createAdminSupabaseClient().from("accounts").select("username").eq("id", user.accountId).maybeSingle();
   const sports = clubTypes.map((t) => ({ code: t.code, label: t.name.replace(/^Klub\s+/, "") }));
   const allGroups: NavGroup[] = [
     {
@@ -42,7 +44,7 @@ export async function PersonalShell({ user, children }: { user: { fullName: stri
     <AppShell
       navGroups={navGroups}
       fullName={user.fullName}
-      profileHref="/profile"
+      profileHref={restriction === null && account ? `/${account.username as string}` : "/settings/account"}
       roleLabel="Akun"
       clubName={APP_NAME}
       quickAdd

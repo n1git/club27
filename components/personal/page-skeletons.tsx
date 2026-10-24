@@ -2,6 +2,21 @@ import { PostCardSkeleton } from "@/components/social/post-skeleton";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LoadingMark, SkelCard, SkelHeader, SkelLine, SkelPanel, SkelRows, SkelStack } from "@/components/ui/skeletons";
 
+function MobileTop({ button }: { button?: boolean }) {
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <div className="flex items-center gap-3">
+        <LoadingMark />
+        <div className="flex flex-col gap-2">
+          <Skeleton className="h-5 w-24" />
+          <Skeleton className="h-3 w-40" />
+        </div>
+      </div>
+      {button ? <Skeleton className="h-8 w-24 rounded-md" /> : null}
+    </div>
+  );
+}
+
 export function WorkoutsSkeleton() {
   return (
     <SkelStack>
@@ -18,7 +33,7 @@ export function WorkoutsSkeleton() {
         </div>
         <Skeleton className="h-8 w-28 rounded-md" />
       </div>
-      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]">
+      <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]">
         <div className="flex min-w-0 flex-col gap-6 lg:col-start-2 lg:row-start-1">
           <div className="flex flex-col gap-5 rounded-2xl border border-border bg-card p-4 sm:p-5">
             <Skeleton className="h-4 w-24" />
@@ -71,7 +86,7 @@ export function FriendsSkeleton() {
         </div>
         <Skeleton className="h-8 w-28 rounded-md" />
       </div>
-      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
+      <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
         <div className="flex min-w-0 flex-col gap-3 lg:col-start-1 lg:row-start-1">
           <Skeleton className="h-4 w-20" />
           <Skeleton className="h-11 w-full rounded-xl" />
@@ -167,40 +182,66 @@ export function ChatSkeleton() {
 
 export function GroupsSkeleton() {
   return (
-    <SkelStack title>
-      <SkelCard lines={2} />
-      <SkelCard lines={3} />
-      <SkelPanel />
+    <SkelStack>
+      <div className="flex max-w-2xl flex-col gap-6">
+        <MobileTop button />
+        <Skeleton className="h-4 w-24" />
+        <div className="flex flex-col divide-y divide-border rounded-2xl border border-border bg-card">
+          {Array.from({ length: 3 }, (_, i) => (
+            <div key={i} className="flex items-center gap-3 px-4 py-3">
+              <Skeleton className="size-12 shrink-0 rounded-xl" />
+              <div className="flex min-w-0 flex-1 flex-col gap-2">
+                <Skeleton className="h-3.5 w-1/2" />
+                <Skeleton className="h-3 w-3/4" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </SkelStack>
   );
 }
 
 export function ChallengesSkeleton() {
   return (
-    <SkelStack title>
-      <div className="grid gap-3 md:grid-cols-2">
-        {Array.from({ length: 4 }, (_, i) => (
-          <div key={i} className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-4">
-            <Skeleton className="h-4 w-1/2" />
-            <Skeleton className="h-3 w-3/4" />
-            <Skeleton className="h-2.5 w-full rounded-full" />
-          </div>
-        ))}
+    <SkelStack>
+      <div className="flex max-w-3xl flex-col gap-6">
+        <MobileTop button />
+        <Skeleton className="h-4 w-20" />
+        <div className="grid gap-3 md:grid-cols-2">
+          {Array.from({ length: 2 }, (_, i) => (
+            <div key={i} className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-4">
+              <Skeleton className="h-4 w-1/2" />
+              <Skeleton className="h-3 w-3/4" />
+              <Skeleton className="h-2.5 w-full rounded-full" />
+              <Skeleton className="h-8 w-28 rounded-md" />
+            </div>
+          ))}
+        </div>
       </div>
-      <SkelPanel />
     </SkelStack>
   );
 }
 
 export function HealthSkeleton() {
   return (
-    <SkelStack title>
-      <div className="grid gap-4 sm:grid-cols-2">
-        <Skeleton className="h-24 rounded-2xl" />
-        <Skeleton className="h-24 rounded-2xl" />
+    <SkelStack>
+      <div className="flex max-w-2xl flex-col gap-6">
+        <MobileTop button />
+        <div className="grid grid-cols-2 gap-3">
+          <Skeleton className="h-24 rounded-2xl" />
+          <Skeleton className="h-24 rounded-2xl" />
+        </div>
+        <Skeleton className="h-4 w-20" />
+        <div className="flex flex-col divide-y divide-border rounded-2xl border border-border bg-card">
+          {Array.from({ length: 4 }, (_, i) => (
+            <div key={i} className="flex flex-col gap-2 px-4 py-4">
+              <Skeleton className="h-3.5 w-28" />
+              <Skeleton className="h-3 w-2/3" />
+            </div>
+          ))}
+        </div>
       </div>
-      <SkelPanel />
-      <SkelCard lines={4} />
     </SkelStack>
   );
 }
@@ -217,11 +258,76 @@ export function FormCardsSkeleton({ cards = 3 }: { cards?: number }) {
 
 export function DetailSkeleton() {
   return (
-    <SkelStack title>
-      <div className="grid items-start gap-4 lg:grid-cols-2">
-        <SkelCard lines={3} className="lg:col-span-2" />
-        <SkelCard lines={2} />
-        <SkelCard lines={2} />
+    <SkelStack>
+      <MobileTop button />
+      <Skeleton className="h-10 w-48 rounded-xl" />
+      <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
+        <div className="flex flex-col gap-3">
+          <Skeleton className="h-4 w-32" />
+          {Array.from({ length: 2 }, (_, i) => (
+            <div key={i} className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-4">
+              <div className="flex items-start gap-3">
+                <Skeleton className="size-12 shrink-0 rounded-xl" />
+                <div className="flex flex-1 flex-col gap-2">
+                  <Skeleton className="h-3.5 w-1/2" />
+                  <Skeleton className="h-3 w-3/4" />
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Skeleton className="h-8 w-16 rounded-md" />
+                <Skeleton className="h-8 w-20 rounded-md" />
+                <Skeleton className="h-8 w-16 rounded-md" />
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="flex flex-col gap-3">
+          <Skeleton className="h-4 w-24" />
+          <div className="flex flex-col divide-y divide-border rounded-2xl border border-border bg-card">
+            {Array.from({ length: 3 }, (_, i) => (
+              <div key={i} className="px-4 py-3">
+                <SkelLine avatar="rounded-full" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </SkelStack>
+  );
+}
+
+export function ChallengeDetailSkeleton() {
+  return (
+    <SkelStack>
+      <div className="flex max-w-2xl flex-col gap-6">
+        <MobileTop />
+        <div className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-4">
+          <Skeleton className="h-4 w-1/2" />
+          <Skeleton className="h-3 w-3/4" />
+          <Skeleton className="h-2.5 w-full rounded-full" />
+        </div>
+        <Skeleton className="h-4 w-24" />
+        <div className="flex flex-col gap-2">
+          {Array.from({ length: 4 }, (_, i) => (
+            <Skeleton key={i} className="h-16 rounded-2xl" />
+          ))}
+        </div>
+      </div>
+    </SkelStack>
+  );
+}
+
+export function SettingsSkeleton() {
+  return (
+    <SkelStack>
+      <div className="flex max-w-2xl flex-col gap-6">
+        <MobileTop />
+        <Skeleton className="h-16 rounded-2xl" />
+        <div className="flex flex-col gap-3">
+          {Array.from({ length: 3 }, (_, i) => (
+            <Skeleton key={i} className="h-14 rounded-2xl" />
+          ))}
+        </div>
       </div>
     </SkelStack>
   );

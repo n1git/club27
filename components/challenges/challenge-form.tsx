@@ -2,6 +2,7 @@
 
 import { ActionForm } from "@/components/shared/action-form";
 import { ActionSubmitButton } from "@/components/shared/action-submit-button";
+import { CloseOnSuccess } from "@/components/ui/form-sheet";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
@@ -20,6 +21,7 @@ export function ChallengeForm({
 }) {
   return (
     <ActionForm action={action} className="grid max-w-3xl gap-4 sm:grid-cols-2">
+      <CloseOnSuccess />
       {groups ? (
         <div className="flex flex-col gap-1.5 sm:col-span-2">
           <Label htmlFor="c-group">Grup</Label>

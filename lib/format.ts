@@ -63,3 +63,7 @@ export function formatRelativeShort(value: string | Date, now: number = Date.now
   if (days < 35) return `${Math.floor(days / 7)} mgg`;
   return formatJakartaDate(value, { day: "numeric", month: "short", year: "numeric" });
 }
+
+export function formatMeasure(value: number | null, unit = ""): string {
+  return value == null ? "-" : `${value.toLocaleString("id-ID", { minimumFractionDigits: 0, maximumFractionDigits: 1 })}${unit}`;
+}

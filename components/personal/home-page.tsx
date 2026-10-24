@@ -39,7 +39,7 @@ export async function PersonalHomePage({ searchParams }: { searchParams: Promise
           </AlertDescription>
         </Alert>
       ) : null}
-      <div className={banned ? "flex flex-col gap-6" : "grid items-start gap-6 lg:grid-cols-[minmax(0,34rem)_minmax(0,1fr)]"}>
+      <div className={banned ? "flex flex-col gap-6" : "grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,34rem)_minmax(0,1fr)]"}>
         {banned ? null : (
           <div className="-mx-4 flex min-w-0 flex-col sm:mx-0">
             <Suspense fallback={<StoriesBarSkeleton />}>

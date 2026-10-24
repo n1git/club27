@@ -68,7 +68,7 @@ export function FriendsView({ lists }: { lists: FriendLists }) {
   const dim = (key: string) => (busy === key ? "opacity-50" : undefined);
 
   return (
-    <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
+    <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
       {lists.incoming.length ? (
         <section aria-labelledby="req-title" className="flex flex-col gap-2 lg:col-start-2 lg:row-start-1">
           <h2 id="req-title" className="flex items-center gap-2 text-sm font-semibold">

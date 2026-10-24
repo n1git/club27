@@ -1,17 +1,21 @@
+import type { Metadata } from "next";
 import { CreateOrganizationForm } from "@/components/shared/create-organization-form";
-import { PageHeader } from "@/components/ui/page-header";
+import { EmptyPanel, PageTop } from "@/components/personal/page-top";
 import { getActivePlans } from "@/lib/data/platform-pricing";
 import { getReadyClubTypes } from "@/lib/club-type";
 import { requireRole } from "@/lib/auth/guard";
+
+export const metadata: Metadata = { title: "Upgrade" };
 
 export default async function UpgradePage() {
   await requireRole("personal");
   const [plans, clubTypes] = await Promise.all([getActivePlans(), getReadyClubTypes()]);
   return (
     <div className="flex flex-col gap-6">
-      <PageHeader
+      <PageTop
         title="Upgrade"
         subtitle="Fitur sosial dan catatan latihan tetap gratis. Berlangganan hanya untuk mengelola klub: anggota, jadwal, kasir, dan lainnya."
+        mobileSubtitle="Sosial dan latihan tetap gratis."
       />
       {plans.length > 0 ? (
         <section className="flex flex-col gap-3">
@@ -21,7 +25,9 @@ export default async function UpgradePage() {
           <CreateOrganizationForm plans={plans} clubTypes={clubTypes} />
         </section>
       ) : (
-        <p className="text-sm text-muted-foreground">Paket belum tersedia.</p>
+        <EmptyPanel>
+          <p>Paket belum tersedia.</p>
+        </EmptyPanel>
       )}
     </div>
   );

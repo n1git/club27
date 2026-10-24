@@ -5,7 +5,6 @@ import { formatJakartaDateTime } from "@/lib/format";
 import { ActionForm } from "@/components/shared/action-form";
 import { ActionSubmitButton } from "@/components/shared/action-submit-button";
 import { ConsentDetails } from "@/components/shared/consent-details";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -13,12 +12,8 @@ export function MyConsentsCard({ consents }: { consents: AccountConsent[] }) {
   const terms = consents.find((c) => c.kind === "terms_privacy") ?? null;
   const health = consents.find((c) => c.kind === "health_data" && !c.revokedAt) ?? null;
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Persetujuan saya</CardTitle>
-        <CardDescription>Bukti persetujuan disimpan walau akun dihapus, tanpa data lain.</CardDescription>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-5 text-sm">
+    <div className="flex flex-col gap-5 text-sm">
+      <p className="text-muted-foreground">Bukti persetujuan disimpan walau akun dihapus, tanpa data lain.</p>
         <section className="flex flex-col gap-2">
           <p className="font-medium">Syarat & Ketentuan dan Kebijakan Privasi</p>
           {terms ? (
@@ -56,7 +51,6 @@ export function MyConsentsCard({ consents }: { consents: AccountConsent[] }) {
             <p className="text-muted-foreground">Tidak aktif. Persetujuan diminta saat Anda membuka menu Kesehatan.</p>
           )}
         </section>
-      </CardContent>
-    </Card>
+    </div>
   );
 }

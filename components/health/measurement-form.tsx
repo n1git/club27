@@ -1,17 +1,17 @@
 "use client";
 
-import Link from "next/link";
 import { addMeasurement, updateMeasurement } from "@/lib/actions/health";
 import type { Measurement } from "@/lib/data/health";
 import { ActionForm } from "@/components/shared/action-form";
 import { ActionSubmitButton } from "@/components/shared/action-submit-button";
-import { buttonVariants } from "@/components/ui/button";
+import { CloseOnSuccess } from "@/components/ui/form-sheet";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 export function MeasurementForm({ today, entry }: { today: string; entry?: Measurement }) {
   return (
     <ActionForm action={entry ? updateMeasurement : addMeasurement} className="grid max-w-2xl gap-4 sm:grid-cols-3">
+      <CloseOnSuccess />
       {entry ? <input type="hidden" name="measurementId" value={entry.id} /> : null}
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="h-date">Tanggal</Label>
@@ -28,11 +28,6 @@ export function MeasurementForm({ today, entry }: { today: string; entry?: Measu
       <p className="text-sm text-muted-foreground sm:col-span-3">Isi tinggi, berat, atau keduanya. Satu catatan per tanggal.</p>
       <div className="flex flex-wrap gap-2 sm:col-span-3">
         <ActionSubmitButton className="w-fit">{entry ? "Simpan perubahan" : "Simpan catatan"}</ActionSubmitButton>
-        {entry ? (
-          <Link href="/health" className={buttonVariants({ variant: "outline" })}>
-            Batal
-          </Link>
-        ) : null}
       </div>
     </ActionForm>
   );

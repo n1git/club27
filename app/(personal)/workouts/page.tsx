@@ -77,7 +77,7 @@ export default async function WorkoutPage() {
         </QuickAddTrigger>
       </div>
 
-      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]">
+      <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_24rem]">
         <div className="flex min-w-0 flex-col gap-6 lg:col-start-2 lg:row-start-1">
           <WeekHero weeks={data.weeks} goal={data.weeklyGoal} streak={insights.streak} />
           <Section title="Lencana">

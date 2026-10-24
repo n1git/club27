@@ -7,10 +7,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { CloseOnSuccess } from "@/components/ui/form-sheet";
 
 export function GroupCreateForm() {
   return (
     <ActionForm action={createGroup} className="grid max-w-xl gap-4">
+      <CloseOnSuccess />
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="group-name">Nama grup</Label>
         <Input id="group-name" name="name" required minLength={3} maxLength={80} />
@@ -28,6 +30,7 @@ export function InviteForm({ groupId, friends }: { groupId: string; friends: { i
   if (!friends.length) return <p className="text-sm text-muted-foreground">Semua teman Anda sudah ada di grup ini atau belum ada teman.</p>;
   return (
     <ActionForm action={inviteToGroup} className="flex flex-wrap items-end gap-3">
+      <CloseOnSuccess />
       <input type="hidden" name="groupId" value={groupId} />
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="invite-friend">Undang teman</Label>
@@ -47,6 +50,7 @@ export function InviteForm({ groupId, friends }: { groupId: string; friends: { i
 export function EventForm({ groupId }: { groupId: string }) {
   return (
     <ActionForm action={createEvent} className="grid max-w-2xl gap-4 sm:grid-cols-2">
+      <CloseOnSuccess />
       <input type="hidden" name="groupId" value={groupId} />
       <div className="flex flex-col gap-1.5 sm:col-span-2">
         <Label htmlFor="ev-title">Judul event</Label>

@@ -2,6 +2,8 @@
 
 ## 2026-10-24
 
+- The personal pages share one layout language now: Grup (create from a sheet, list with tiles, group page with event cards, member list and a segmented Ringkasan/Peringkat switch), Tantangan, Kesehatan (summary tiles, history as a list, add and edit in a sheet), Pengaturan (account link plus folding panels for consents, export and delete), Akun, Gabung klub and Upgrade. Loading skeletons follow the same shapes.
+- The personal `/profile` page is gone: the profile is `/<username>`, the menu's top row points there, and `/profile` redirects. Your own page shows an "Edit profil" link (to Pengaturan > Akun); other people's pages do not.
 - Beranda relaid out: stories, then a week strip (progress ring, sessions, minutes and distance, a Catat button) and the feed on a phone; the same summary becomes a card in a right column on desktop, together with clubs and upcoming events (now with a date tile). A new account sees a three-step start panel instead of a blank feed. The "Beranda" title is gone, the loading skeleton matches.
 - Profiles show a bio (up to 160 characters) and up to three badges you pick; both are set in Pengaturan > Akun under "Profil sosial" and are visible to you and your friends. Migration 071.
 - `/friends` relaid out: friend requests on top with Terima and Tolak, your friends as one list with a search field (from five friends up), a message button and a menu per friend (profile, message, remove, block); sent requests and blocked people fold away below. The loading skeleton follows the same shape.

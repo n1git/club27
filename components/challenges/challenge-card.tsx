@@ -54,7 +54,7 @@ export function ChallengeCard({
             {challenge.scopeName} · <ChallengePeriod challenge={challenge} sportLabel={sportLabel} />
           </span>
         </div>
-        {ended ? <span className="rounded-full bg-secondary px-2.5 py-0.5 text-xs font-semibold">Selesai</span> : null}
+        {ended ? <span className="rounded-md bg-secondary px-2 py-0.5 text-xs font-semibold">Selesai</span> : null}
       </div>
       {me ? (
         <div className="flex flex-col gap-1.5">

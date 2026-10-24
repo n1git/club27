@@ -91,8 +91,8 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
               <ActionSubmitButton>Tambah teman</ActionSubmitButton>
             </ActionForm>
           ) : profile.relation === "self" ? (
-            <Link href="/profile" className={buttonVariants({ variant: "outline", size: "sm" })}>
-              Ubah profil
+            <Link href="/settings/account" className="text-sm font-semibold text-accent-foreground underline-offset-4 hover:underline">
+              Edit profil
             </Link>
           ) : (
             <>

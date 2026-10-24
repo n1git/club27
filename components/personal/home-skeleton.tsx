@@ -19,7 +19,7 @@ function StripSkeleton() {
 export function HomeSkeleton() {
   return (
     <div className="page-spinner flex flex-col gap-6">
-      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,34rem)_minmax(0,1fr)]">
+      <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,34rem)_minmax(0,1fr)]">
         <div className="-mx-4 flex min-w-0 flex-col sm:mx-0">
           <StoriesBarSkeleton />
           <StripSkeleton />
