@@ -75,6 +75,10 @@ create function billing_cover(p_from date, p_to date) returns numeric as $$
   where p_to > p_from;
 $$ language sql immutable set search_path = public;
 
+create function billing_span_months(p_from date, p_to date) returns numeric as $$
+  select extract(year from age(p_to, p_from)) * 12 + extract(month from age(p_to, p_from)) + extract(day from age(p_to, p_from)) / 30.0;
+$$ language sql immutable set search_path = public;
+
 create function platform_segments(p_with_refunds boolean default true)
 returns table (renewal_id uuid, organization_id uuid, kind text, seg_from date, seg_to date, rate numeric, extra_month date, extra_amount numeric) as $$
 declare
@@ -171,8 +175,9 @@ $$ language sql stable set search_path = public;
 
 create function platform_org_mrr(p_ref date, p_exclude_suspended boolean default false)
 returns table (organization_id uuid, mrr numeric) as $$
-  select s.organization_id, sum(round(s.rate))
+  select s.organization_id, sum(round(s.rate * billing_cover(sr.period_start, sr.period_end) / nullif(billing_span_months(sr.period_start, sr.period_end), 0)))
   from platform_segments(true) s
+  join subscription_renewals sr on sr.id = s.renewal_id
   where s.kind = 'seg' and s.seg_from <= p_ref and p_ref < s.seg_to and s.rate > 0
     and (not p_exclude_suspended or coalesce(subscription_phase(s.organization_id), '') <> 'suspended')
   group by s.organization_id;
@@ -250,6 +255,22 @@ begin
 end;
 $$ language plpgsql stable security definer set search_path = public;
 
+create function platform_paid_renewals(p_month date)
+returns table (renewal_id uuid, invoice_number text, receipt_number text, organization_name text, paid_at timestamptz, amount numeric,
+  payment_method text, payment_type text, gateway_fee numeric, fee_estimated boolean, refunded numeric) as $$
+  select sr.id, sr.invoice_number, sr.receipt_number, o.name, sr.paid_at, sr.amount, sr.payment_method, sr.payment_type,
+    coalesce(sr.gateway_fee_actual, round(sr.amount * r.percent / 100 + r.fixed_idr)),
+    sr.gateway_fee_actual is null,
+    coalesce((select sum(pr.amount) from platform_refunds pr where pr.renewal_id = sr.id), 0)
+  from subscription_renewals sr
+  join organizations o on o.id = sr.organization_id
+  left join payment_fee_rates r on r.payment_type = sr.payment_type
+  where sr.status = 'paid'
+    and (sr.paid_at at time zone 'Asia/Jakarta')::date >= date_trunc('month', p_month)::date
+    and (sr.paid_at at time zone 'Asia/Jakarta')::date < (date_trunc('month', p_month) + interval '1 month')::date
+  order by sr.paid_at, sr.id;
+$$ language sql stable security definer set search_path = public;
+
 create function platform_pnl(p_month date) returns jsonb as $$
 declare
   v_month date := date_trunc('month', p_month)::date;
@@ -266,14 +287,9 @@ declare
   v_net numeric;
 begin
   select * into v_issuer from billing_issuer limit 1;
-  select
-    coalesce(sum(coalesce(sr.gateway_fee_actual, round(sr.amount * r.percent / 100 + r.fixed_idr))), 0),
-    count(*) filter (where sr.gateway_fee_actual is null and r.payment_type is not null),
-    count(*) filter (where sr.gateway_fee_actual is null and r.payment_type is null)
+  select coalesce(sum(gateway_fee), 0), count(*) filter (where fee_estimated and gateway_fee is not null), count(*) filter (where gateway_fee is null)
   into v_gateway, v_estimated, v_unknown
-  from subscription_renewals sr
-  left join payment_fee_rates r on r.payment_type = sr.payment_type
-  where sr.status = 'paid' and (sr.paid_at at time zone 'Asia/Jakarta')::date >= v_month and (sr.paid_at at time zone 'Asia/Jakarta')::date < v_next;
+  from platform_paid_renewals(v_month);
 
   select coalesce(sum(amount_idr), 0) into v_expenses from platform_expenses where month = v_month;
   v_cash := (v_metrics ->> 'cash_paid')::numeric - (v_metrics ->> 'cash_refunds')::numeric;
@@ -341,6 +357,7 @@ end;
 $$ language plpgsql security definer set search_path = public;
 
 revoke execute on function billing_cover(date, date) from public, anon, authenticated;
+revoke execute on function billing_span_months(date, date) from public, anon, authenticated;
 revoke execute on function billing_cover_in_month(date, date, date) from public, anon, authenticated;
 revoke execute on function platform_segments(boolean) from public, anon, authenticated;
 revoke execute on function platform_recognition(boolean) from public, anon, authenticated;
@@ -348,10 +365,12 @@ revoke execute on function platform_reference_date(date) from public, anon, auth
 revoke execute on function platform_org_mrr(date, boolean) from public, anon, authenticated;
 revoke execute on function platform_metrics(date) from public, anon, authenticated;
 revoke execute on function platform_pnl(date) from public, anon, authenticated;
+revoke execute on function platform_paid_renewals(date) from public, anon, authenticated;
 revoke execute on function platform_ending_soon(int) from public, anon, authenticated;
 revoke execute on function refund_renewal(uuid, numeric, text, date, text, uuid) from public, anon, authenticated;
 grant execute on function platform_metrics(date) to service_role;
 grant execute on function platform_pnl(date) to service_role;
+grant execute on function platform_paid_renewals(date) to service_role;
 grant execute on function platform_ending_soon(int) to service_role;
 grant execute on function platform_recognition(boolean) to service_role;
 grant execute on function refund_renewal(uuid, numeric, text, date, text, uuid) to service_role;

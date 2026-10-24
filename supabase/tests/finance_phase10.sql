@@ -85,6 +85,9 @@ begin
   assert (select amount from platform_recognition() where renewal_id = v_c and month = '2032-11-01') = 62500, 'full month';
   assert (select amount from platform_recognition() where renewal_id = v_c and month = '2033-10-01') = 46371, 'mid-month last month';
   assert (select sum(amount) from platform_recognition() where renewal_id = v_c) = 750000, 'sums to amount';
+  assert (select mrr from platform_org_mrr('2032-11-15') where organization_id = (select id from ids where k = 'c')) = 62500, 'mid-month yearly MRR stays 62.500';
+  perform pg_temp.paid('c', 'monthly', 2, 1, 150000, '2034-10-24', '2034-11-24');
+  assert (select mrr from platform_org_mrr('2034-11-01') where organization_id = (select id from ids where k = 'c')) = 150000, 'mid-month monthly MRR stays 150.000';
 end $$;
 
 savepoint before_refund;
