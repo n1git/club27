@@ -2,6 +2,7 @@
 
 ## 2026-10-24
 
+- Beranda relaid out: stories, then a week strip (progress ring, sessions, minutes and distance, a Catat button) and the feed on a phone; the same summary becomes a card in a right column on desktop, together with clubs and upcoming events (now with a date tile). A new account sees a three-step start panel instead of a blank feed. The "Beranda" title is gone, the loading skeleton matches.
 - Profiles show a bio (up to 160 characters) and up to three badges you pick; both are set in Pengaturan > Akun under "Profil sosial" and are visible to you and your friends. Migration 071.
 - `/friends` relaid out: friend requests on top with Terima and Tolak, your friends as one list with a search field (from five friends up), a message button and a menu per friend (profile, message, remove, block); sent requests and blocked people fold away below. The loading skeleton follows the same shape.
 - Page loading is now a skeleton shaped like the page it is loading (home, workouts, friends, notifications, messages and chats, groups, challenges, health, settings, group and challenge details, a post, profiles, sign-in and sign-up, legal pages; the other areas keep a generic one), with the Ruzz mark breathing in it, instead of the stopwatch spinner. Home shows one skeleton that matches the page, not two; every skeleton has a soft sheen that stops under reduced motion. The small ring in the navigation stays.

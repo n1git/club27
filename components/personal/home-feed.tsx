@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getFeed } from "@/lib/data/social";
 import { getReadyClubTypes } from "@/lib/club-type";
+import { HomeEmpty } from "@/components/personal/home-empty";
 import { PostCard } from "@/components/social/post-card";
 import { buttonVariants } from "@/components/ui/button";
 
@@ -13,13 +14,7 @@ export async function HomeFeed({ accountId, before }: { accountId: string; befor
         Feed teman
       </h2>
       {feed.posts.length === 0 ? (
-        <p className="px-4 py-8 text-center text-sm text-muted-foreground sm:px-0">
-          Belum ada postingan.{" "}
-          <Link href="/friends" className="font-medium text-accent-foreground underline-offset-4 hover:underline">
-            Tambah teman
-          </Link>{" "}
-          untuk melihat aktivitas mereka.
-        </p>
+        <HomeEmpty />
       ) : (
         feed.posts.map((post) => <PostCard key={post.id} post={post} sportLabels={sportLabels} />)
       )}

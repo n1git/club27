@@ -2,9 +2,7 @@ import { Flame, Target } from "lucide-react";
 import type { WeekSummary } from "@/lib/data/workouts";
 import { cn } from "@/lib/utils";
 import { GoalForm } from "./goal-form";
-
-const RADIUS = 46;
-const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
+import { ProgressRing } from "./progress-ring";
 
 function distance(m: number) {
   return m >= 1000 ? `${(m / 1000).toLocaleString("id-ID", { maximumFractionDigits: 2 })} km` : `${m} m`;
@@ -21,7 +19,6 @@ function Stat({ label, value }: { label: string; value: string }) {
 
 export function WeekHero({ weeks, goal, streak }: { weeks: WeekSummary[]; goal: number | null; streak: number }) {
   const current = weeks[weeks.length - 1];
-  const progress = goal ? Math.min(1, current.sessions / goal) : 0;
   const reached = Boolean(goal) && current.sessions >= (goal ?? 0);
   const peak = Math.max(1, ...weeks.map((w) => w.sessions));
 
@@ -40,28 +37,10 @@ export function WeekHero({ weeks, goal, streak }: { weeks: WeekSummary[]; goal: 
       </div>
 
       <div className="flex items-center gap-5">
-        <div className="relative size-28 shrink-0">
-          <svg viewBox="0 0 100 100" className="size-full -rotate-90" aria-hidden="true" focusable="false">
-            <circle cx="50" cy="50" r={RADIUS} fill="none" strokeWidth="8" className="stroke-secondary" />
-            {goal ? (
-              <circle
-                cx="50"
-                cy="50"
-                r={RADIUS}
-                fill="none"
-                strokeWidth="8"
-                strokeLinecap="round"
-                strokeDasharray={CIRCUMFERENCE}
-                strokeDashoffset={CIRCUMFERENCE * (1 - progress)}
-                className="stroke-primary motion-safe:transition-[stroke-dashoffset] motion-safe:duration-700"
-              />
-            ) : null}
-          </svg>
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-3xl font-semibold tabular-nums leading-none">{current.sessions}</span>
-            <span className="mt-1 text-xs text-muted-foreground">{goal ? `dari ${goal} sesi` : "sesi"}</span>
-          </div>
-        </div>
+        <ProgressRing sessions={current.sessions} goal={goal} className="size-28">
+          <span className="text-3xl font-semibold tabular-nums leading-none">{current.sessions}</span>
+          <span className="mt-1 text-xs text-muted-foreground">{goal ? `dari ${goal} sesi` : "sesi"}</span>
+        </ProgressRing>
         <dl className="grid min-w-0 flex-1 grid-cols-1 gap-3">
           <Stat label="menit berlatih" value={current.minutes.toLocaleString("id-ID")} />
           <Stat label="jarak" value={distance(current.distanceM)} />

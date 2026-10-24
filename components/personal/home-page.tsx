@@ -6,15 +6,13 @@ import { getWorkoutData } from "@/lib/data/workouts";
 import { isSocialBanned } from "@/lib/auth/social-access";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { getUpcomingEvents } from "@/lib/data/groups";
-import { formatJakartaDateTime } from "@/lib/format";
+import { formatJakartaDate, formatJakartaTime } from "@/lib/format";
 import { HomeFeed } from "@/components/personal/home-feed";
 import { HomeStories, StoriesBarSkeleton } from "@/components/personal/home-stories";
 import { FeedSkeleton } from "@/components/social/post-skeleton";
-import { QuickAddTrigger } from "@/components/personal/quick-add";
+import { WeekCard, WeekStrip } from "@/components/personal/week-glance";
 import { ContextList } from "@/components/shared/context-list";
 import { PendingDeletions } from "@/components/shared/pending-deletions";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { PageHeader } from "@/components/ui/page-header";
 
 export async function PersonalHomePage({ searchParams }: { searchParams: Promise<{ sebelum?: string }> }) {
   const { profile } = await requireValidSession();
@@ -32,10 +30,8 @@ export async function PersonalHomePage({ searchParams }: { searchParams: Promise
 
   return (
     <div className="flex flex-col gap-6">
+      <h1 className="sr-only">Beranda</h1>
       <PendingDeletions items={deletions} />
-      <div className="hidden sm:block">
-        <PageHeader title="Beranda" subtitle={`Halo, ${profile.fullName}`} />
-      </div>
       {inactive.length ? (
         <Alert>
           <AlertDescription>
@@ -49,72 +45,60 @@ export async function PersonalHomePage({ searchParams }: { searchParams: Promise
             <Suspense fallback={<StoriesBarSkeleton />}>
               <HomeStories accountId={profile.accountId} name={profile.fullName} />
             </Suspense>
+            <WeekStrip week={week} goal={workouts.weeklyGoal} />
             <Suspense fallback={<FeedSkeleton />}>
               <HomeFeed accountId={profile.accountId} before={before} />
             </Suspense>
           </div>
         )}
-        <div className={banned ? "flex max-w-2xl flex-col gap-4" : "flex flex-col gap-4 lg:col-start-2 lg:row-start-1"}>
-          <Card>
-            <CardHeader>
-              <CardTitle>Latihan minggu ini</CardTitle>
-              <CardDescription>
-                {workouts.weeklyGoal ? `${week.sessions} dari target ${workouts.weeklyGoal} sesi` : `${week.sessions} sesi, ${week.minutes} menit`}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <QuickAddTrigger kind="workout" variant="outline" size="sm">
-                Catat latihan
-              </QuickAddTrigger>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Klub dan organisasi</CardTitle>
-              <CardDescription>
-                {entries.length ? "Pilih yang ingin Anda buka." : "Anda belum tergabung di klub mana pun."}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="text-sm text-muted-foreground">
-              {entries.length ? (
-                <ContextList options={entries.map((e) => ({ key: e.key, label: e.label, detail: e.detail }))} />
-              ) : (
-                <>
-                  <Link href="/join" className="font-medium text-accent-foreground underline-offset-4 hover:underline">
-                    Gabung klub
-                  </Link>{" "}
-                  dengan kode dari admin klub, atau{" "}
-                  <Link href="/upgrade" className="font-medium text-accent-foreground underline-offset-4 hover:underline">
-                    buat klub sendiri
-                  </Link>
-                  .
-                </>
-              )}
-            </CardContent>
-          </Card>
+        <aside aria-label="Ringkasan" className={banned ? "flex max-w-md flex-col gap-4" : "flex flex-col gap-4 lg:col-start-2 lg:row-start-1"}>
+          {banned ? null : <WeekCard week={week} goal={workouts.weeklyGoal} />}
+          <section aria-labelledby="clubs-title" className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-4">
+            <h2 id="clubs-title" className="text-sm font-semibold">
+              Klub dan organisasi
+            </h2>
+            {entries.length ? (
+              <ContextList options={entries.map((e) => ({ key: e.key, label: e.label, detail: e.detail }))} />
+            ) : (
+              <p className="text-sm text-muted-foreground">
+                Anda belum tergabung di klub mana pun.{" "}
+                <Link href="/join" className="font-medium text-accent-foreground underline-offset-4 hover:underline">
+                  Gabung klub
+                </Link>{" "}
+                dengan kode dari admin klub, atau{" "}
+                <Link href="/upgrade" className="font-medium text-accent-foreground underline-offset-4 hover:underline">
+                  buat klub sendiri
+                </Link>
+                .
+              </p>
+            )}
+          </section>
           {upcoming.length ? (
-            <Card>
-              <CardHeader>
-                <CardTitle>Event mendatang</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="flex flex-col gap-2 text-sm">
-                  {upcoming.map((e) => (
-                    <li key={e.id}>
-                      <Link href={`/g/${e.groupId}`} className="font-medium text-accent-foreground underline-offset-4 hover:underline">
-                        {e.title}
-                      </Link>
-                      <span className="text-xs text-muted-foreground">
-                        {" "}
-                        · {e.groupName} · {formatJakartaDateTime(e.startsAt)}
+            <section aria-labelledby="events-title" className="flex flex-col gap-1 rounded-2xl border border-border bg-card p-4">
+              <h2 id="events-title" className="text-sm font-semibold">
+                Event mendatang
+              </h2>
+              <ul className="flex flex-col divide-y divide-border">
+                {upcoming.map((e) => (
+                  <li key={e.id}>
+                    <Link href={`/g/${e.groupId}`} className="flex items-center gap-3 rounded-lg py-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+                      <span className="flex size-11 shrink-0 flex-col items-center justify-center rounded-xl bg-secondary leading-none">
+                        <span className="text-base font-semibold tabular-nums">{formatJakartaDate(e.startsAt, { day: "numeric" })}</span>
+                        <span className="mt-0.5 text-[10px] text-muted-foreground">{formatJakartaDate(e.startsAt, { month: "short" })}</span>
                       </span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-            </Card>
+                      <span className="flex min-w-0 flex-col leading-tight">
+                        <span className="truncate text-sm font-semibold">{e.title}</span>
+                        <span className="truncate text-xs text-muted-foreground">
+                          {e.groupName} · {formatJakartaTime(e.startsAt, { hour: "2-digit", minute: "2-digit" })}
+                        </span>
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
           ) : null}
-        </div>
+        </aside>
       </div>
     </div>
   );
